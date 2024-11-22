@@ -1,4 +1,4 @@
-# SLEEPDIVER
+# SLEEPDIVER(개발 중..)
 This Sleep Management Service analyzes users' sleep patterns by processing sleep stage data through chat-GPT. Using connected IoT devices, the service identifies sleep disturbance factors and provides personalized insights to improve sleep quality..
 
 ## Features
