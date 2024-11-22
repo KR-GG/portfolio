@@ -1,4 +1,4 @@
-# SEED website project
+# SEED website project(개발 중..)
 **Domain**: [kau-seed.o-r.kr](http://kau-seed.o-r.kr)  
 
 ## Overview
