@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Records</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sleep Records</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>UUID</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Stage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in sleep_data %}
+            <tr>
+                <td>{{ record.id }}</td>
+                <td>{{ record.client_id }}</td>
+                <td>{{ record.start_time }}</td>
+                <td>{{ record.end_time }}</td>
+                <td>{{ record.stage }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

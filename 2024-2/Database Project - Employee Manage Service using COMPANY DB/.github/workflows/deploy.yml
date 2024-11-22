@@ -1,0 +1,57 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - if_want_to_deploy_change_this_to_your_branch_name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: mvn package -DskipTests
+
+      - name: Set executable permissions
+        run: chmod +x ./mvnw
+
+      - name: Build JAR
+        run: ./mvnw clean package -DskipTests
+
+      - name: SCP to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOYMENT_PORT }}
+          source: .
+          target: /home/${{ secrets.DEPLOYMENT_USERNAME }}/project
+
+      - name: Run the application on EC2
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOYMENT_PORT }}
+          script: |
+            cd /home/${{ secrets.DEPLOYMENT_USERNAME }}/project
+            docker build -t employee-api:latest .
+            docker stop employee-api || true
+            docker rm employee-api || true
+            docker run -d --network="host" --name employee-api \
+              -e SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/mydb \
+              -e SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
+              -e SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
+              employee-api:latest

@@ -1,0 +1,401 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api/employee/{employee_ssn}": {
+      "get": {
+        "tags": [
+          "조회(GET)"
+        ],
+        "summary": "특정 ssn 직원 조회",
+        "description": "ssn값을 통해 특정 직원을 조회합니다.",
+        "operationId": "getEmployeeBySsn",
+        "parameters": [
+          {
+            "name": "employee_ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "업데이트(PUT)"
+        ],
+        "summary": "직원 정보 수정",
+        "description": "특정 ssn값의 직원 정보를 수정합니다.",
+        "operationId": "updateEmployeeBySsn",
+        "parameters": [
+          {
+            "name": "employee_ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Employee"
+              },
+              "example": {
+                "fname": "Solomon",
+                "bdate": "2001-12-08",
+                "salary": 53126
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                },
+                "example": {
+                  "fname": "Solomon",
+                  "minit": "T",
+                  "lname": "Wong",
+                  "ssn": 333445555,
+                  "bdate": "2001-12-08",
+                  "address": "638 Voss, Houston, TX",
+                  "sex": "M",
+                  "salary": 53126,
+                  "superSsn": 888665555,
+                  "dno": 5,
+                  "created": "2024-11-04T12:33:07.000Z",
+                  "modified": "2024-11-04T23:33:07.000Z"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "삭제(DELETE)"
+        ],
+        "summary": "직원 삭제(휴지통)",
+        "description": "해당하는 ssn값의 직원 정보를 휴지통으로 삭제합니다.",
+        "operationId": "soft_deleteEmployeeBySsn",
+        "parameters": [
+          {
+            "name": "employee_ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Employee deleted successfully"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee": {
+      "get": {
+        "tags": [
+          "조회(GET)"
+        ],
+        "summary": "모든 직원 조회",
+        "description": "모든 직원 정보를 조회합니다.",
+        "operationId": "getAllEmployees",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Employee"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "추가(POST)"
+        ],
+        "summary": "직원 정보 추가",
+        "description": "해당하는 데이터의 직원을 새로 추가합니다.",
+        "operationId": "addEmployee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "John",
+                  "D",
+                  "Doe",
+                  "123456789",
+                  "1990-01-01",
+                  "123 Main St",
+                  "M",
+                  50000,
+                  "987654321",
+                  1
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                },
+                "example": {
+                  "fname": "john",
+                  "minit": "D",
+                  "lname": "Doe",
+                  "ssn": 123456789,
+                  "bdate": "1990-01-01",
+                  "address": "123 Main St",
+                  "sex": "M",
+                  "salary": 50000,
+                  "superSsn": 987654321,
+                  "dno": 1,
+                  "created": "2024-11-04T23:33:07.000Z",
+                  "modified": "2024-11-04T23:33:07.000Z"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee/trash": {
+      "get": {
+        "tags": [
+          "조회(GET)"
+        ],
+        "summary": "휴지통 직원 조회",
+        "description": "휴지통의 모든 직원 정보를 조회합니다.",
+        "operationId": "getAllTrashes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Employee"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee/search": {
+      "get": {
+        "tags": [
+          "조회(GET)"
+        ],
+        "summary": "직원 검색",
+        "description": "임의의 특성값을 통해 직원을 조회합니다.",
+        "operationId": "getEmployeeByAttr",
+        "parameters": [
+          {
+            "name": "search_attr",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "fname",
+                  "minit",
+                  "lname",
+                  "ssn",
+                  "bdate",
+                  "address",
+                  "sex",
+                  "salary",
+                  "superSsn",
+                  "dno"
+                ]
+              }
+            }
+          },
+          {
+            "name": "employee_value",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee/hard/{employee_ssn}": {
+      "delete": {
+        "tags": [
+          "삭제(DELETE)"
+        ],
+        "summary": "직원 완전 삭제",
+        "description": "해당하는 ssn값의 직원 정보를 완전히 삭제합니다.",
+        "operationId": "hard_deleteEmployeeBySsn",
+        "parameters": [
+          {
+            "name": "employee_ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Employee deleted successfully"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "fname": {
+            "type": "string",
+            "example": "Franklin"
+          },
+          "minit": {
+            "type": "string",
+            "example": "T"
+          },
+          "lname": {
+            "type": "string",
+            "example": "Wong"
+          },
+          "ssn": {
+            "type": "string",
+            "example": 333445555
+          },
+          "bdate": {
+            "type": "string",
+            "format": "date",
+            "example": "1955-12-08"
+          },
+          "address": {
+            "type": "string",
+            "example": "638 Voss, Houston, TX"
+          },
+          "sex": {
+            "type": "string",
+            "example": "M"
+          },
+          "salary": {
+            "type": "number",
+            "format": "double",
+            "example": 40000
+          },
+          "superSsn": {
+            "type": "string",
+            "example": 888665555
+          },
+          "dno": {
+            "type": "integer",
+            "format": "int32",
+            "example": 5
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-11-04T12:33:07.000Z"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-11-04T12:33:07.000Z"
+          }
+        }
+      }
+    }
+  }
+}

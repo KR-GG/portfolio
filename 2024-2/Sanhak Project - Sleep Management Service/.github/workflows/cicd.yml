@@ -1,0 +1,55 @@
+name: Django CI/CD
+
+on:
+  push:
+    branches: ["develop"]
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Create .env file
+      run: |
+        echo "ENV=production" >> SleepDiver/.env
+        echo "DB_ENGINE=django.db.backends.mysql" >> SleepDiver/.env
+        echo "DB_NAME=${{ secrets.DB_NAME }}" >> SleepDiver/.env
+        echo "DB_USER=${{ secrets.DB_USER }}" >> SleepDiver/.env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> SleepDiver/.env
+        echo "DB_HOST=${{ secrets.DB_HOST }}" >> SleepDiver/.env
+        echo "DB_PORT=${{ secrets.DB_PORT }}" >> SleepDiver/.env
+
+    - name: Copy SleepDiver to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.DEPLOYMENT_HOST }}
+        username: ${{ secrets.DEPLOYMENT_USERNAME }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        port: ${{ secrets.DEPLOYMENT_PORT }}
+        source: ./SleepDiver
+        target: /home/${{ secrets.DEPLOYMENT_USERNAME }}/app/
+
+  CD:
+    needs: [CI]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy Docker Compose Application
+      uses: appleboy/ssh-action@v1.1.0
+      with:
+        host: ${{ secrets.DEPLOYMENT_HOST }}
+        username: ${{ secrets.DEPLOYMENT_USERNAME }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        port: ${{ secrets.DEPLOYMENT_PORT }}
+        script: |
+          cd /home/${{ secrets.DEPLOYMENT_USERNAME }}/app/SleepDiver
+          docker-compose down
+          docker-compose build
+          docker-compose up -d
+
+          docker-compose exec sleep-diver python manage.py makemigrations
+          docker-compose exec sleep-diver python manage.py migrate
+
+          docker image prune -a -f

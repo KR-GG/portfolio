@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clean existing app directory
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOYMENT_PORT }}
+          script: |
+            sudo rm -rf /home/${{ secrets.DEPLOYMENT_USERNAME }}/app/*
+
+      - name: Upload files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOYMENT_PORT }}
+          source: .
+          target: /home/${{ secrets.DEPLOYMENT_USERNAME }}/app/
+
+      - name: Deploy on server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOYMENT_PORT }}
+          script: |
+            cd /home/${{ secrets.DEPLOYMENT_USERNAME }}/app
+            export JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            docker-compose down
+            docker-compose build
+            docker-compose up -d
+            docker image prune -a -f

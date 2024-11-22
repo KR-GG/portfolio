@@ -1,0 +1,25 @@
+services:
+  sleep-diver:
+    build: .
+    command: gunicorn -w 4 -b 0.0.0.0:8000 SleepDiver.wsgi:application
+    expose:
+      - "8000"
+    environment:
+      - DJANGO_SECRET_KEY=$${{ secrets.DJANGO_SECRET_KEY }}
+    volumes:
+      - static_volume:/app/staticfiles
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf  # 로컬 nginx.conf를 Nginx 설정으로 마운트
+      - /home/ec2-user/ssl/certs:/etc/letsencrypt/live/sleep-diver.com/certs  # SSL 인증서 폴더를 Nginx에 마운트
+      - /home/ec2-user/ssl/private:/etc/letsencrypt/live/sleep-diver.com/private  # SSL 개인 키 폴더를 Nginx에 마운트
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - sleep-diver
+
+volumes:
+  static_volume:
