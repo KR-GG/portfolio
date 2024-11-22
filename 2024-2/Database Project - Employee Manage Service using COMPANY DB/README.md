@@ -61,7 +61,7 @@ The API documentation is available at:
 The project uses GitHub Actions for deployment. The deployment configuration can be found in deploy.yml.
 
 ### Database Migration
-Database migrations are managed using Flyway. Migration scripts are located in the [migration](http://_vscodecontentref_/10) directory.
+Database migrations are managed using Flyway. Migration scripts are located in the [migration](https://github.com/KR-GG/portfolio/tree/master/2024-2/Database%20Project%20-%20Employee%20Manage%20Service%20using%20COMPANY%20DB/src/main/resources/db/migration) directory.
 
 ### Swagger Configuration
-Swagger is configured in the SwaggerConfig.java file. The OpenAPI specification is loaded from [openapi.json](http://_vscodecontentref_/11).
+Swagger is configured in the SwaggerConfig.java file. The OpenAPI specification is loaded from [openapi.json](https://github.com/KR-GG/portfolio/blob/master/2024-2/Database%20Project%20-%20Employee%20Manage%20Service%20using%20COMPANY%20DB/src/main/resources/static/openapi.json).
